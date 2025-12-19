@@ -1,9 +1,53 @@
-const User = {
-    Name:"Christopher Chitumbo",
-    Age: 23,
-    FavoriteLanguage: "Python"
-};
 
-console.log("My name is " + User.Name);
-console.log("I am " + User.Age + " years old.");
-console.log("My favorite programming language is " + User.FavoriteLanguage);
+const express = require("express");
+const dotenv = require("dotenv");
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+/* ===== Custom Middleware (Bonus) ===== */
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
+
+/* ===== JSON Parsing ===== */
+app.use(express.json());
+
+/* ===== Serve Static Files ===== */
+app.use(express.static("public"));
+
+/* ===== Routes ===== */
+
+// GET /
+app.get("/", (req, res) => {
+    res.send("My Week 2 API!");
+});
+
+// POST /user
+app.post("/user", (req, res) => {
+    const { name, email } = req.body;
+
+    if (!name || !email) {
+        return res.status(400).json({
+            error: "Name and email are required"
+        });
+    }
+
+    res.json({
+        message: `Hello, ${name}!`
+    });
+});
+
+// GET /user/:id
+app.get("/user/:id", (req, res) => {
+    const { id } = req.params;
+    res.send(`User ${id} profile`);
+});
+
+/* ===== Start Server ===== */
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
